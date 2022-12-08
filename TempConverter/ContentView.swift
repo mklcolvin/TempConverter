@@ -11,23 +11,44 @@ struct ContentView: View {
     @State private var inputUnit = "ºF"
     @State private var outputUnit = "ºC"
     @State private var tempSetting = 0.0
-    @State private var allErrorMsgs = ["Cannot convert from ºF to ºF", "Cannot convert from ºC to ºC", "Cannot convert from ºK to ºK"]
+    @State private var allErrorMsgs = ["", "Cannot convert from ºF to ºF", "Cannot convert from ºC to ºC", "Cannot convert from ºK to ºK", "You've hit some undefined error"]
     
     @State private var errIndex = 0
     
     @State private var errorMsg = ""
- 
-//    var errorMsg: String {
-//        allErrorMsgs
-//    }
-//
+    
     @FocusState private var tempIsFocused: Bool
     
     let unitInSelection = ["ºF", "ºC", "ºK"]
     let unitOutSelection = ["ºF", "ºC", "ºK"]
     let convertedTemp = 0.0
     
-    var convertTemp: Double {
+//    var result = convertTemp(tempSetting)
+    
+//    var doneTemp = result.0
+//    var doneErrIndex = result.1
+    
+    private var showErrorMessage: String {
+        if (inputUnit == "ºF" && outputUnit == "ºF")
+        {
+            return "Cannot convert from ºF to ºF"
+            
+        }
+        else  if (inputUnit == "ºC" && outputUnit == "ºC")
+        {
+            return "Cannot convert from ºC to ºC"
+        }
+        else if(inputUnit == "ºK" && outputUnit == "ºK")
+        {
+            return "Cannot convert from ºK to ºK"
+        }
+        else
+        {
+            return ""
+        }
+    }
+    
+    func convertTemp(_: Double) -> (Double, Int) {
         
         var convertedTemp = 0.0
         let conversionDirection = inputUnit + outputUnit
@@ -51,73 +72,90 @@ struct ContentView: View {
         case "ºKºC":
             convertedTemp = tempSetting - 273.15
             
+        case "ºFºF":
+            convertedTemp = 99999999999999.99
+            
         case "ºCºC":
             convertedTemp = 99999999999999.99
-            errIndex = 1
             
-
-        default:
+        case "ºKºK":
             convertedTemp = 99999999999999.99
-//            errorMsg = "Bad"
+            
+        default:
+            convertedTemp = 0
         }
         
-        print("Temp Setting = ", tempSetting)
-        print ("Converted Direction = ", conversionDirection)
-        print("Conversion Temp = ", conversionDirection)
-        print("Converted Temp = ", convertedTemp)
-        print("Error Message = ", errorMsg)
-        
-        return convertedTemp
+//        print("Temp Setting = ", tempSetting)
+//        print ("Converted Direction = ", conversionDirection)
+//        print("Conversion Temp = ", conversionDirection)
+//        print("Converted Temp = ", convertedTemp)
+//        print("Error Message = ", errorMsg)
+//        print("Error Index = ", errIndex)
+//
+        return (convertedTemp, errIndex)
         
     }
+    
     
     
     var body: some View {
         NavigationView {
             Form {
                 Section {
-                    HStack {
+                    HStack
+                    {
                         Text("Temperature:")
                         TextField("Temperature: ", value: $tempSetting, formatter: NumberFormatter())
                         
                     }
-                        Picker("From:", selection: $inputUnit){
-                            ForEach (unitInSelection, id: \.self) {
-                                Text("\($0)")
-                            }
-                        } .pickerStyle(.menu)
-                        Picker("To:", selection: $outputUnit){
-                            ForEach (unitOutSelection, id: \.self) {
-                                Text("\($0)")
-                            }
-                        } .pickerStyle(.menu)
-                        
-                  
+                    Picker("From:", selection: $inputUnit)
+                    {
+                        ForEach (unitInSelection, id: \.self)
+                        {
+                            Text("\($0)")
+                        }
+                    } .pickerStyle(.menu)
+                    
+                    Picker("To:", selection: $outputUnit)
+                    {
+                        ForEach (unitOutSelection, id: \.self)
+                        {
+                            Text("\($0)")
+                        }
+                    } .pickerStyle(.menu)
                     
                 }
-                    Section {
-                        
-                        Text(convertTemp, format: .number)
-                    }
-                    
-                    Section {
-                                Text(allErrorMsgs[errIndex])
-                    }
                 
-               
+                Section {
+
+                    Text(convertTemp(tempSetting).0, format: .number)
+                }
+                
+//                Button(action: { convertTemp(tempSetting) }, label: { Text("Convert") })
+//
+                Section {
+                    Text(showErrorMessage)
+                }
+                
+                
             }
             .navigationTitle("Temp Converter")
             .toolbar
             {
-               ToolbarItemGroup(placement: .keyboard) {
-                   Spacer()
-                   Button("Done") {
-                      tempIsFocused = false
-                   }
+                ToolbarItemGroup(placement: .keyboard)
+                {
+                    Spacer()
+                    Button("Done")
+                    {
+                        tempIsFocused = false
+                        
+                    }
                 }
             }
         }
+      
     }
+
     
     
     struct ContentView_Previews: PreviewProvider {
