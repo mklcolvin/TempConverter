@@ -65,7 +65,7 @@ struct ContentView: View {
         print ("Converted Direction = ", conversionDirection)
         print("Conversion Temp = ", conversionDirection)
         print("Converted Temp = ", convertedTemp)
-  //      print("Error Message = ", errorMsg)
+        print("Error Message = ", errorMsg)
         
         return convertedTemp
         
