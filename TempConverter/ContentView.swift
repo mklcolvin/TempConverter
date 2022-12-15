@@ -106,6 +106,7 @@ struct ContentView: View {
                     {
                         Text("Temperature:")
                         TextField("Temperature: ", value: $tempSetting, formatter: NumberFormatter())
+                            .keyboardType(.decimalPad)
                         
                     }
                     Picker("From:", selection: $inputUnit)
